@@ -1,0 +1,6 @@
+package com.example.heyflutter_challenge
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
