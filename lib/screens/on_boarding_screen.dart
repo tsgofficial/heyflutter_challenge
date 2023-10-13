@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
+import 'package:heyflutter_challenge/repository/const.dart';
+import 'package:heyflutter_challenge/screens/home_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnBoardingScreen extends StatelessWidget {
@@ -12,17 +14,14 @@ class OnBoardingScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                   onPressed: () {
-                    pageController.animateToPage(
-                      2,
-                      duration: Duration(milliseconds: 500),
-                      curve: Curves.ease,
-                    );
+                    Get.to(() => HomeScreen());
                   },
                   child: Text(
                     'Skip',
@@ -32,31 +31,16 @@ class OnBoardingScreen extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: PageView(
-                controller: pageController,
-                children: [
-                  Center(
-                    child: SizedBox(
-                      height: Get.size.height / 2,
-                      width: Get.size.width / 2,
-                      child: Image.asset('assets/onboarding_plant1.png'),
-                    ),
-                  ),
-                  Center(
-                    child: SizedBox(
-                      height: Get.size.height / 2,
-                      width: Get.size.width / 2,
-                      child: Image.asset('assets/onboarding_plant2.png'),
-                    ),
-                  ),
-                  Center(
-                    child: SizedBox(
-                      height: Get.size.height / 2,
-                      width: Get.size.width / 2,
-                      child: Image.asset('assets/onboarding_plant3.png'),
-                    ),
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                child: PageView(
+                  controller: pageController,
+                  children: [
+                    Image.asset('assets/onboarding_plant1.png'),
+                    Image.asset('assets/onboarding_plant2.png'),
+                    Image.asset('assets/onboarding_plant3.png'),
+                  ],
+                ),
               ),
             ),
             SmoothPageIndicator(
@@ -64,38 +48,77 @@ class OnBoardingScreen extends StatelessWidget {
               count: 3,
               effect: ExpandingDotsEffect(
                 dotColor: Colors.grey,
-                activeDotColor: Colors.green,
-                dotHeight: 8,
-                dotWidth: 8,
-                spacing: 4,
+                activeDotColor: primaryColor,
+                dotHeight: 5,
+                dotWidth: 5,
+                spacing: 5,
               ),
             ),
-            Text(
-              'Enjoy your life with plants',
-              style: TextStyle(
-                fontSize: 32,
-              ),
+            SizedBox(height: 30),
+            Row(
+              children: [
+                SizedBox(width: 50),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Enjoy your',
+                          style: getFont(32),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Life with',
+                                style: getFont(32),
+                              ),
+                              TextSpan(
+                                text: ' Plants',
+                                style: getFontBold(32),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
+            SizedBox(height: 30),
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.green,
+                color: primaryColor,
               ),
-              child: Center(
-                child: IconButton(
-                  onPressed: () {
-                    pageController.nextPage(
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.ease);
-                  },
-                  icon: Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                    size: 48,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: IconButton(
+                    onPressed: () {
+                      if (pageController.page == 2)
+                        Get.to(() => HomeScreen());
+                      else
+                        pageController.nextPage(
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.ease,
+                        );
+                    },
+                    icon: Icon(
+                      Icons.arrow_forward_rounded,
+                      color: Colors.white,
+                      size: 48,
+                    ),
                   ),
                 ),
               ),
             ),
+            SizedBox(height: 30),
           ],
         ),
       ),
