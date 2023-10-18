@@ -13,4 +13,5 @@ TextStyle getFontBold(double? fontSize, {Color? color}) => GoogleFonts.poppins(
     );
 
 const Color primaryColor = Color(0xFF76984b);
+const Color secondaryColor = Color(0xFF67854a);
 const Color backgroundColor = Color(0xFFececee);
