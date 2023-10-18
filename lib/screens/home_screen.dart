@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
@@ -58,6 +60,7 @@ class HomeScreen extends StatelessWidget {
                                     .toLowerCase()
                                     .contains(value.toLowerCase()) ||
                                 element.image
+                                    .join('')
                                     .toLowerCase()
                                     .contains(value.toLowerCase()) ||
                                 element.price
@@ -167,8 +170,8 @@ class HomeScreen extends StatelessWidget {
                                   SizedBox(
                                     height: 150,
                                     child: Image.asset(
-                                      _homeController
-                                          .searchedPlants[index].image,
+                                      _homeController.searchedPlants[index]
+                                          .image[Random().nextInt(3)],
                                       fit: BoxFit.cover,
                                     ),
                                   ),
