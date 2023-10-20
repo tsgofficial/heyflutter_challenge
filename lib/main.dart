@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:heyflutter_challenge/repository/shared_preferences.dart';
 import 'package:heyflutter_challenge/screens/on_boarding_screen.dart';
 
 void main() {
   runApp(const MyApp());
+  StorageUtil.getInstance();
 }
 
 class MyApp extends StatelessWidget {

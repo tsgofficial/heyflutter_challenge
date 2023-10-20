@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heyflutter_challenge/models/plant_model.dart';
 import 'package:heyflutter_challenge/repository/const.dart';
+import 'package:heyflutter_challenge/repository/shared_preferences.dart';
+import 'package:heyflutter_challenge/screens/cart_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -30,13 +32,15 @@ class DetailScreen extends StatelessWidget {
                         icon: Icon(Icons.arrow_back_ios_new_rounded),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.to(() => CartScreen());
+                        },
                         icon: Icon(Icons.shopping_cart_outlined),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: Get.size.height / 2.5,
+                    height: Get.size.height / 4 * 2,
                     child: Row(
                       children: [
                         Expanded(
@@ -122,16 +126,19 @@ class DetailScreen extends StatelessWidget {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
-                          child: Container(
-                            height: 75,
-                            decoration: BoxDecoration(
-                              color: secondaryColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Add to cart',
-                                style: getFontBold(14, color: Colors.white),
+                          child: InkWell(
+                            onTap: () => addCart(plant.id),
+                            child: Container(
+                              height: 75,
+                              decoration: BoxDecoration(
+                                color: secondaryColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Add to cart',
+                                  style: getFontBold(14, color: Colors.white),
+                                ),
                               ),
                             ),
                           ),
@@ -146,6 +153,11 @@ class DetailScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void addCart(int id) async {
+    await StorageUtil.saveToStorage(id.toString());
+    Get.snackbar('Successful', 'Plant is successfully added to the cart!');
   }
 
   Widget buildStatusBlock(int type) {
@@ -227,7 +239,6 @@ class DetailScreen extends StatelessWidget {
                 height: 25,
                 child: Image.asset(
                   'assets/botanical.png',
-                  color: Colors.white,
                 ),
               ),
               Text(

@@ -72,6 +72,7 @@ class HomeController extends GetxController {
   List<Plant> plants = List.generate(
     15,
     (index) => Plant(
+      id: index,
       name: plantNames[index],
       type: plantTypes[Random().nextInt(plantTypes.length)],
       image: List.generate(

@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
+import 'package:heyflutter_challenge/components/plant_tile.dart';
 import 'package:heyflutter_challenge/getx_controllers/home_controller.dart';
 import 'package:heyflutter_challenge/repository/const.dart';
 import 'package:heyflutter_challenge/screens/detail_screen.dart';
@@ -157,77 +156,8 @@ class HomeScreen extends StatelessWidget {
                               plant: _homeController.searchedPlants[index],
                             ),
                           ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 150,
-                                    child: Image.asset(
-                                      _homeController.searchedPlants[index]
-                                          .image[Random().nextInt(3)],
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          _homeController
-                                              .searchedPlants[index].name,
-                                          style: getFontBold(12),
-                                        ),
-                                        if (_homeController
-                                                .searchedPlants[index].type !=
-                                            '')
-                                          Text(
-                                            _homeController
-                                                .searchedPlants[index].type,
-                                            style:
-                                                getFont(10, color: Colors.grey),
-                                          ),
-                                        const SizedBox(height: 15),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              _homeController
-                                                  .searchedPlants[index].price,
-                                              style: getFontBold(14),
-                                            ),
-                                            Container(
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.black,
-                                              ),
-                                              child: const Padding(
-                                                padding: EdgeInsets.all(3.0),
-                                                child: Icon(
-                                                  Icons.favorite_rounded,
-                                                  color: Colors.white,
-                                                  size: 18,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          child: PlantTile(
+                            plant: _homeController.searchedPlants[index],
                           ),
                         ),
                       ),

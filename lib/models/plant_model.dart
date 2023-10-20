@@ -1,4 +1,5 @@
 class Plant {
+  final int id;
   final String name;
   final String type;
   final List<String> image;
@@ -11,6 +12,7 @@ class Plant {
   final String description;
 
   Plant({
+    required this.id,
     required this.minHeight,
     required this.maxHeight,
     required this.minTemperature,
