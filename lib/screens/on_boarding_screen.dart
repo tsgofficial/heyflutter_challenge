@@ -23,7 +23,7 @@ class OnBoardingScreen extends StatelessWidget {
                   onPressed: () {
                     Get.to(() => HomeScreen());
                   },
-                  child: Text(
+                  child: const Text(
                     'Skip',
                     style: TextStyle(color: Colors.black),
                   ),
@@ -31,22 +31,26 @@ class OnBoardingScreen extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                child: PageView(
-                  controller: pageController,
-                  children: [
-                    Image.asset('assets/onboarding_plant1.png'),
-                    Image.asset('assets/onboarding_plant2.png'),
-                    Image.asset('assets/onboarding_plant3.png'),
-                  ],
+              child: PageView(
+                controller: pageController,
+                children: List.generate(
+                  3,
+                  (index) => Row(
+                    children: [
+                      const SizedBox(width: 50),
+                      Expanded(
+                          child: Image.asset(
+                              'assets/onboarding_plant${index + 1}.png')),
+                      const SizedBox(width: 50),
+                    ],
+                  ),
                 ),
               ),
             ),
             SmoothPageIndicator(
               controller: pageController,
               count: 3,
-              effect: ExpandingDotsEffect(
+              effect: const ExpandingDotsEffect(
                 dotColor: Colors.grey,
                 activeDotColor: primaryColor,
                 dotHeight: 5,
@@ -54,10 +58,10 @@ class OnBoardingScreen extends StatelessWidget {
                 spacing: 5,
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Row(
               children: [
-                SizedBox(width: 50),
+                const SizedBox(width: 50),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 50.0),
@@ -90,9 +94,9 @@ class OnBoardingScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: primaryColor,
               ),
@@ -101,15 +105,16 @@ class OnBoardingScreen extends StatelessWidget {
                 child: Center(
                   child: IconButton(
                     onPressed: () {
-                      if (pageController.page == 2)
+                      if (pageController.page == 2) {
                         Get.to(() => HomeScreen());
-                      else
+                      } else {
                         pageController.nextPage(
-                          duration: Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 500),
                           curve: Curves.ease,
                         );
+                      }
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.arrow_forward_rounded,
                       color: Colors.white,
                       size: 48,
@@ -118,7 +123,7 @@ class OnBoardingScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
           ],
         ),
       ),

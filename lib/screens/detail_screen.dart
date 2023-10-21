@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:heyflutter_challenge/getx_controllers/home_controller.dart';
 import 'package:heyflutter_challenge/models/plant_model.dart';
 import 'package:heyflutter_challenge/repository/const.dart';
 import 'package:heyflutter_challenge/repository/shared_preferences.dart';
@@ -8,19 +9,27 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DetailScreen extends StatelessWidget {
   final Plant plant;
-  DetailScreen({super.key, required this.plant});
+  final bool isFromHome;
+  DetailScreen({
+    super.key,
+    required this.plant,
+    required this.isFromHome,
+  });
+
   final controller = PageController();
+
+  final _homeController = Get.find<HomeController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(30.0),
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -29,64 +38,106 @@ class DetailScreen extends StatelessWidget {
                         onPressed: () {
                           Get.back();
                         },
-                        icon: Icon(Icons.arrow_back_ios_new_rounded),
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          Get.to(() => CartScreen());
-                        },
-                        icon: Icon(Icons.shopping_cart_outlined),
-                      ),
+                      if (isFromHome)
+                        Stack(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Get.to(() => CartScreen());
+                              },
+                              icon: const Icon(Icons.shopping_cart_outlined),
+                            ),
+                            Obx(
+                              () => _homeController.savedPlants.isEmpty
+                                  ? const SizedBox()
+                                  : Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        height: 20,
+                                        width: 20,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Center(
+                                          child: Obx(
+                                            () => Text(
+                                              _homeController.savedPlants.length
+                                                  .toString(),
+                                              style: getFont(12,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
-                  SizedBox(
-                    height: Get.size.height / 4 * 2,
-                    child: Row(
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: PageView(
-                            scrollDirection: Axis.vertical,
-                            controller: controller,
+                          child: Row(
                             children: [
-                              for (var image in plant.image)
-                                SizedBox(
-                                  height: Get.size.height / 10,
-                                  child: Image.asset(
-                                    image,
-                                    fit: BoxFit.fitWidth,
-                                  ),
+                              Expanded(
+                                child: PageView(
+                                  scrollDirection: Axis.vertical,
+                                  controller: controller,
+                                  children: [
+                                    for (var image in plant.image)
+                                      SizedBox(
+                                        height: Get.size.height / 10,
+                                        child: Image.asset(
+                                          image,
+                                          fit: BoxFit.fitHeight,
+                                        ),
+                                      ),
+                                  ],
                                 ),
+                              ),
+                              SmoothPageIndicator(
+                                controller: controller,
+                                count: plant.image.length,
+                                axisDirection: Axis.vertical,
+                                effect: const ExpandingDotsEffect(
+                                  dotColor: Colors.grey,
+                                  activeDotColor: primaryColor,
+                                  dotHeight: 5,
+                                  dotWidth: 5,
+                                  spacing: 5,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        SmoothPageIndicator(
-                          controller: controller,
-                          count: plant.image.length,
-                          axisDirection: Axis.vertical,
-                          effect: ExpandingDotsEffect(
-                            dotColor: Colors.grey,
-                            activeDotColor: primaryColor,
-                            dotHeight: 8,
-                            dotWidth: 8,
-                            expansionFactor: 2,
-                          ),
-                        ),
+                        const SizedBox(height: 15),
+                        Text(plant.name.split(' ').join('-'),
+                            style: getFontBold(20)),
+                        Text(plant.description, style: getFont(12)),
                       ],
                     ),
                   ),
-                  Text(plant.name.split(' ').join('-'), style: getFontBold(20)),
-                  Text(plant.description, style: getFont(12)),
+                  SizedBox(height: Get.size.height / 3),
                 ],
               ),
             ),
           ),
           Positioned(
             bottom: 0,
-            left: 0,
             right: 0,
+            left: 0,
             child: Container(
               height: Get.size.height / 3,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: primaryColor,
                 borderRadius: BorderRadius.horizontal(
                   left: Radius.circular(45),
@@ -127,7 +178,7 @@ class DetailScreen extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: InkWell(
-                            onTap: () => addCart(plant.id),
+                            onTap: () => addRemoveCart(plant.id),
                             child: Container(
                               height: 75,
                               decoration: BoxDecoration(
@@ -135,10 +186,14 @@ class DetailScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Center(
-                                child: Text(
-                                  'Add to cart',
-                                  style: getFontBold(14, color: Colors.white),
-                                ),
+                                child: Obx(() => Text(
+                                      _homeController.savedPlants
+                                              .contains(plant.id.toString())
+                                          ? 'Remove from cart'
+                                          : 'Add to cart',
+                                      style:
+                                          getFontBold(14, color: Colors.white),
+                                    )),
                               ),
                             ),
                           ),
@@ -155,9 +210,14 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
-  void addCart(int id) async {
-    await StorageUtil.saveToStorage(id.toString());
-    Get.snackbar('Successful', 'Plant is successfully added to the cart!');
+  void addRemoveCart(int id) async {
+    if (_homeController.savedPlants.contains(plant.id.toString())) {
+      _homeController.savedPlants.remove(plant.id.toString());
+      await StorageUtil.removeFromStorage(id.toString());
+    } else {
+      _homeController.savedPlants.add(plant.id.toString());
+      await StorageUtil.saveToStorage(id.toString());
+    }
   }
 
   Widget buildStatusBlock(int type) {
@@ -167,7 +227,7 @@ class DetailScreen extends StatelessWidget {
           width: Get.size.width / 4,
           child: Column(
             children: [
-              Icon(
+              const Icon(
                 Icons.height_rounded,
                 color: Colors.white,
               ),
@@ -179,7 +239,7 @@ class DetailScreen extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: plant.minHeight.toString() + "cm",
+                      text: "${plant.minHeight.toString()} cm",
                       style: getFont(10, color: Colors.white),
                     ),
                     TextSpan(
@@ -187,7 +247,7 @@ class DetailScreen extends StatelessWidget {
                       style: getFont(10, color: Colors.white),
                     ),
                     TextSpan(
-                      text: plant.maxHeight.toString() + "cm",
+                      text: "${plant.maxHeight.toString()} cm",
                       style: getFont(10, color: Colors.white),
                     ),
                   ],
@@ -201,7 +261,7 @@ class DetailScreen extends StatelessWidget {
           width: Get.size.width / 4,
           child: Column(
             children: [
-              Icon(
+              const Icon(
                 Icons.thermostat_rounded,
                 color: Colors.white,
               ),
@@ -213,7 +273,7 @@ class DetailScreen extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: plant.minTemperature.toString() + "°C",
+                      text: '${plant.minTemperature.toString()} °C',
                       style: getFont(10, color: Colors.white),
                     ),
                     TextSpan(
@@ -221,7 +281,7 @@ class DetailScreen extends StatelessWidget {
                       style: getFont(10, color: Colors.white),
                     ),
                     TextSpan(
-                      text: plant.maxTemperature.toString() + "°C",
+                      text: '${plant.maxTemperature.toString()} °C',
                       style: getFont(10, color: Colors.white),
                     ),
                   ],
@@ -239,6 +299,7 @@ class DetailScreen extends StatelessWidget {
                 height: 25,
                 child: Image.asset(
                   'assets/botanical.png',
+                  color: Colors.white,
                 ),
               ),
               Text(

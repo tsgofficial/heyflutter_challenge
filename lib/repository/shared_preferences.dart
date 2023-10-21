@@ -26,7 +26,13 @@ class StorageUtil {
     _preferences.setStringList('storedPlants', savedPlants);
   }
 
-  static Future getStoredPlants() async {
+  static Future removeFromStorage(String id) async {
+    final savedPlants = _preferences.getStringList('storedPlants') ?? [];
+    savedPlants.remove(id);
+    _preferences.setStringList('storedPlants', savedPlants);
+  }
+
+  static Future<List<String>> getStoredPlants() async {
     return _preferences.getStringList('storedPlants') ?? [];
   }
 }

@@ -52,24 +52,7 @@ class HomeScreen extends StatelessWidget {
                     child: TextField(
                       cursorColor: Colors.black54,
                       cursorHeight: 15,
-                      onChanged: (value) {
-                        _homeController.searchedPlants.value = _homeController
-                            .plants
-                            .where((element) => (element.name
-                                    .toLowerCase()
-                                    .contains(value.toLowerCase()) ||
-                                element.image
-                                    .join('')
-                                    .toLowerCase()
-                                    .contains(value.toLowerCase()) ||
-                                element.price
-                                    .toLowerCase()
-                                    .contains(value.toLowerCase()) ||
-                                element.type
-                                    .toLowerCase()
-                                    .contains(value.toLowerCase())))
-                            .toList();
-                      },
+                      onChanged: textFieldOnChanged,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
@@ -114,15 +97,18 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 15),
-                  Container(
-                    height: 45,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Image.asset(
-                        'assets/equalizer.png',
+                  InkWell(
+                    onTap: sortList,
+                    child: Container(
+                      height: 45,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Image.asset(
+                          'assets/equalizer.png',
+                        ),
                       ),
                     ),
                   ),
@@ -154,6 +140,7 @@ class HomeScreen extends StatelessWidget {
                           onTap: () => Get.to(
                             () => DetailScreen(
                               plant: _homeController.searchedPlants[index],
+                              isFromHome: true,
                             ),
                           ),
                           child: PlantTile(
@@ -170,5 +157,34 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void textFieldOnChanged(String value) {
+    _homeController.searchedPlants.value = _homeController.plants
+        .where((element) =>
+            (element.name.toLowerCase().contains(value.toLowerCase()) ||
+                element.image
+                    .join('')
+                    .toLowerCase()
+                    .contains(value.toLowerCase()) ||
+                element.price.toLowerCase().contains(value.toLowerCase()) ||
+                element.type.toLowerCase().contains(value.toLowerCase())))
+        .toList();
+  }
+
+  void sortList() {
+    if (_homeController.isListSortedFromAZ == null) {
+      _homeController.searchedPlants
+          .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      _homeController.isListSortedFromAZ = true;
+    } else if (_homeController.isListSortedFromAZ == true) {
+      _homeController.searchedPlants
+          .sort((a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
+      _homeController.isListSortedFromAZ = false;
+    } else {
+      _homeController.searchedPlants
+          .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      _homeController.isListSortedFromAZ = true;
+    }
   }
 }

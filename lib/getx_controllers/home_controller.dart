@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:heyflutter_challenge/models/plant_model.dart';
+import 'package:heyflutter_challenge/repository/shared_preferences.dart';
 
 class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    getSavedPlants();
     searchedPlants.value = plants;
   }
 
@@ -86,4 +88,16 @@ class HomeController extends GetxController {
       potType: potTypes[Random().nextInt(potTypes.length)],
     ),
   );
+
+  RxList<String> savedPlants = <String>[].obs;
+
+  RxBool isLoadingSavedPlants = false.obs;
+
+  void getSavedPlants() async {
+    isLoadingSavedPlants.value = true;
+    savedPlants.value = await StorageUtil.getStoredPlants();
+    isLoadingSavedPlants.value = false;
+  }
+
+  bool? isListSortedFromAZ;
 }
